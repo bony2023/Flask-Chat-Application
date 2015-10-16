@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+{% block content %}
+{% set open = 1 %}
+{% if request.form['submitJ'] and joinform.nameJ.errors + joinform.roomidJ.errors %}
+{% set open = 2 %}
+{% endif %}
+<div class="index container-fluid">
+  {% with messages = get_flashed_messages() %}
+  {% for message in messages %}
+  <div class="alert alert-danger fade in"><span><strong> {{ message }} </strong></span></div>
+  {% endfor %}
+  {% endwith %}
+  {% if request.form['submitC'] %}
+  {% for Namerror in createform.nameC.errors %}
+  <div class="alert alert-warning fade in"><span><strong> {{createform.nameC.label}}: {{Namerror }} </strong></span></div>
+  {% endfor %}
+  {% elif request.form['submitJ'] %}
+  {% for Namerror in joinform.nameJ.errors %}
+  <div class="alert alert-warning fade in"><span><strong>{{joinform.nameJ.label}}: {{ Namerror }} </strong></span></div>
+  {% endfor %}
+  {% for Roomerror in joinform.roomidJ.errors %}
+  <div class="alert alert-warning fade in"><span><strong>{{joinform.roomidJ.label}}: {{ Roomerror }} </strong></span></div>
+  {% endfor %}
+  {% endif %}
+  <div id="outer">
+    <div id="middle">
+      <div class="row-fluid">
+        <div class="col-xs-10 col-sm-9 col-lg-6 center-block">
+          <div class="panel-group" id="accordion">
+            <div class="panel create-panel">
+              <div class="panel-heading">
+                <h4 class="panel-title text-center"> <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">CREATE NEW ROOM</a> </h4>
+              </div>
+              <div id="collapseOne" class="panel-collapse collapse {% if open == 1 %} {{'in'}} {% endif %}">
+                <div class="panel-body">
+                  <p>Create a room instantly and make your friends join through unique room ID.</p>
+                  <br/>
+		  <form action="" method="post" enctype="multipart/form-data">
+		    {{ createform.hidden_tag() }}
+                    {{ createform.nameC.label }} {{ createform.nameC(class_="form-control", id="displayName1") }}
+                    <br/>
+                    {{ createform.avatarC.label }} {{ createform.avatarC(id="avatar1") }}
+                    <br/>
+                    <div class="alert alert-warning fade in img-size1"> <span><strong>Avatar image should be less than 100KB.</strong></span> </div>
+                    {{ createform.submitC(class_="btn btn-primary center-block", onClick="go('.create-panel')") }}
+		    <img class="center-block" src="{{ url_for('static', filename='images/loading.gif') }}" width="30"/>
+		  </form>
+                </div>
+              </div>
+            </div>
+            <br/>
+            <div class="panel join-panel">
+              <div class="panel-heading">
+                <h4 class="panel-title text-center"> <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">JOIN EXISTING ROOM</a> </h4>
+              </div>
+              <div id="collapseTwo" class="panel-collapse collapse {% if open == 2 %} {{'in'}} {% endif %}">
+                <div class="panel-body">
+                  <p>Got a room ID? Join here.</p>
+                  <br/>
+		  <form action="" method="post" enctype="multipart/form-data">
+                    {{ joinform.hidden_tag() }}
+		    {{ joinform.nameJ.label }} {{ joinform.nameJ(class_="form-control", id="displayName2") }}
+                    <br/>
+                    {{ joinform.roomidJ.label }} {{ joinform.roomidJ(class_="form-control", id="roomId") }}
+                    <br/>
+                    {{ joinform.avatarJ.label }} {{ joinform.avatarJ(id="avatar2") }}
+                    <br/>
+                    <div class="alert alert-warning fade in img-size2"> <span><strong>Avatar image should be less than 100KB.</strong></span> </div>
+                    {{ joinform.submitJ(class_="btn btn-primary center-block", onClick="go('.join-panel')") }}
+		    <img class="center-block" src="{{ url_for('static', filename='images/loading.gif') }}" width="30"/>
+		  </form>
+                </div>
+              </div>
+            </div>
+            <br/>
+            <div class="panel anon-panel">
+              <div class="panel-heading">
+                <h4 class="panel-title text-center"> <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree">GO ANONYMOUS</a> </h4>
+              </div>
+              <div id="collapseThree" class="panel-collapse collapse">
+                <div class="panel-body">
+                  <p>Chat anonymously with any random person picked by our system.</p>
+                  <br/>
+                  <br/>
+                  <form action="" method="post">
+		    {{ anonform.hidden_tag() }}
+		    {{ anonform.submitA(class_="btn btn-primary center-block", onClick="go('.anon-panel')") }}
+		    <img class="center-block" src="{{ url_for('static', filename='images/loading.gif') }}" width="30"/>
+		  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

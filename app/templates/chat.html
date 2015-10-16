@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="chat" id="wrapper">
+  <div id="sidebar-wrapper">
+    <div class="list-group"> <a class="list-group-item active" href="#"><b>Room members</b><span class="badge"></span></a> </div>
+    <div class="list-group active-members"></div>
+    <div class="list-group">
+      <a class="list-group-item active" href="#"><b>Settings</b></a> 
+      <span class="list-group-item">
+        <h4>Enter to send:</h4>
+        <span class="pull-right toggle-enter">
+        <input id="enterToSend" type="checkbox" checked data-toggle="toggle"/>
+        </span> 
+      </span>
+      <span class="list-group-item">
+        <h4>Room:</h4>
+        <span class="pull-right">{{session.get('roomid')}}</span> 
+      </span>
+    </div>
+    <div align="center" class="list-group"> <a role="button" class="btn btn-danger btn-lg btn-block" id="" href="#leaveRoom" data-toggle="modal">LEAVE ROOM</a> </div>
+    <div class="list-group" align="center" style="color: #FFF; margin-top: 4em;"> <span class="glyphicon glyphicon-plus"></span> to add people to this room share this link<br/>
+      <a style="color: #aaa" href="http://domain/room/?join={{session.get('roomid')}}">http://domain/room/?join={{session.get('roomid')}}</a> 
+    </div>
+    <div style="margin-bottom: 3em;"></div>
+  </div>
+  <div class="page-content-wrapper">
+    <div id="attachment-err" class="modal fade">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title">File size too large.</h4>
+          </div>
+          <div class="modal-body">
+            <p>Maximum allowed attachment size is 10MB.</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="leaveRoom" class="modal fade">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title">Confirmation</h4>
+          </div>
+          <div class="modal-body">
+            <p>Are you sure you want to leave this room?</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            <button onclick="exitRoom();" class="btn btn-danger">Yes. Exit!</button> 
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      <div class="chat-content"></div>
+    </div>
+    <div class="container" style="margin-top: 7em;">
+      <div class="row navbar-fixed-bottom">
+        <div class="col-xs-12">
+          <div class="pull-right upload-container">
+            <input id="upload-media" class="filestyle" data-input="false" data-size="nr" data-buttonText="Attach media" data-iconName="glyphicon-paperclip" type="file"/>
+            <span class="upload-progress-container"><span id="upload-progress">0%</span><img src="{{ url_for('static', filename='images/loading.gif') }}" width="30"/></span> 
+          </div>
+        </div>
+        <div class="col-xs-12">
+          <div class="input-group" style="width: 100%">
+            <textarea id="send" class="form-control" placeholder="Your message goes here. Shift+Enter for new line..." style="height: 6em; resize: none; border-radius: 0"></textarea>
+            <span class="input-group-btn hidden">
+            <button type="button" class="btn btn-success" style="height: 6em; border-radius: 0; width: 6em"> <span class="glyphicon glyphicon-share-alt" style="font-size: 1.8em;"></span> </button>
+            </span> 
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="menu-toggle"> <span class="glyphicon glyphicon-option-vertical"></span> <span class="glyphicon sr-only">Menu</span> </div>
+</div>
+{% endblock %}

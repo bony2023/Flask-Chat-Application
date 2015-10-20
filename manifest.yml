@@ -1,0 +1,10 @@
+---
+applications:
+- name: flask-chat-app
+  buildpack: https://github.com/bony2023/Flask-Chat-Application
+  memory: 256M
+  instances: 1
+  url: flask-chat${random-word}
+  host: flask-chat-${random-word}
+  path: .
+  command: python run.py

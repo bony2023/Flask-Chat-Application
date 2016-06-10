@@ -11,5 +11,5 @@ class User(db.Model):
 
 class Avatar(db.Model):
 	avatarid = db.Column(db.Integer, primary_key=True)
-	avatarurl = db.Column(db.String(30))
+	avatarurl = db.Column(db.String(100))
 	avatarlocalid = db.Column(db.String(30))

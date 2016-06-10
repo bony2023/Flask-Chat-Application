@@ -8,7 +8,12 @@ $(document).ready(function() {
 // Sockets and events
 var socket;
 $(document).ready(function(){
-	socket = io.connect('http://' + document.domain + ':' + location.port + '/chat');
+	var endpoint = location.protocol + "//" + location.hostname;
+	if(location.port && location.port !== "") {
+		endpoint += (":" + location.port);
+	}
+	endpoint += "/chat";
+	socket = io.connect(endpoint);
     socket.on('connect', function() {
 		socket.emit('joined', {});
 	});

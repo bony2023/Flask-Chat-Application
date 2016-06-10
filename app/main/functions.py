@@ -49,9 +49,9 @@ def getUsers(roomid):
 	
 def removeUser(userid, roomid):
 	r = Room.query.filter_by(roomid = roomid).all()
-	if r and len(r[0].users.all()) == 1:
-		Room.query.filter_by(roomid = roomid).delete()
 	User.query.filter_by(userid = userid).delete()
+	if r and len(r[0].users.all()) == 0:
+		Room.query.filter_by(roomid = roomid).delete()
 	db.session.commit()
 	avatar = os.path.join(os.getcwd(), 'uploads/avatar/' + roomid + '_' + str(userid) + '.jpg')
 	if os.path.isfile(avatar):

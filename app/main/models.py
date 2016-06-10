@@ -8,3 +8,8 @@ class User(db.Model):
 	userid = db.Column(db.Integer, primary_key=True)
 	username = db.Column(db.String(30))
 	roomid = db.Column(db.String(12), db.ForeignKey('room.roomid'))
+
+class Avatar(db.Model):
+	avatarid = db.Column(db.Integer, primary_key=True)
+	avatarurl = db.Column(db.String(30))
+	avatarlocalid = db.Column(db.String(30))

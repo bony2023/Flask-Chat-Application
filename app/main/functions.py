@@ -2,8 +2,15 @@ from flask import send_from_directory
 import string, random, json
 from .models import *
 from app import db
+import cloudinary, cloudinary.uploader, cloudinary.api
 import os
 from config import ALLOWED_EXTENSIONS, UPLOAD_FOLDER_AVATAR
+
+cloudinary.config( 
+  cloud_name = "flaskchat", 
+  api_key = "376393826937556", 
+  api_secret = "l9dzGwmNU4MgKnxTd74sY7-mjBc" 
+)
 
 def getRoom(size = 10, chars = string.ascii_uppercase + string.digits):
 	while True:
@@ -16,10 +23,17 @@ def allowed_file(filename):
 	
 def upload(data, filename):
 	if data and allowed_file(data.filename):
-		data.save(os.path.join(UPLOAD_FOLDER_AVATAR, filename))
+		response = cloudinary.uploader.upload(data)
+		avatar = Avatar(avatarurl = response.get('secure_url'), avatarlocalid = filename)
+		db.session.add(avatar)
+		db.session.commit()
 		
 def userAvatar(filename):
-	return send_from_directory(UPLOAD_FOLDER_AVATAR, filename)
+	avatar = Avatar.query.filter_by(avatarlocalid = filename).first()
+	avatar_url = 'https://res.cloudinary.com/flaskchat/image/upload/v1465554827/tkhdu3vthahiumtu2fop.png'
+	if avatar:
+		avatar_url = avatar.avatarurl
+	return avatar_url
 
 def create_room(form):
 	room = getRoom()
@@ -53,9 +67,9 @@ def removeUser(userid, roomid):
 	if r and len(r[0].users.all()) == 0:
 		Room.query.filter_by(roomid = roomid).delete()
 	db.session.commit()
-	avatar = os.path.join(os.getcwd(), 'uploads/avatar/' + roomid + '_' + str(userid) + '.jpg')
-	if os.path.isfile(avatar):
-		os.remove(avatar)
+	avatar = Avatar.query.filter_by(avatarlocalid = '{}_{}'.format(roomid, userid)).first()
+	if avatar:
+		cloudinary.uploader.destroy(avatar.avatarurl.split('/')[-1].split('.')[0])
 
 def validRoom(roomid):
 	return Room.query.filter_by(roomid = roomid).first() != None

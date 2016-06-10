@@ -30,36 +30,7 @@ $(document).ready(function(){
 		refreshUsers();
     });
     socket.on('message', function(data) {
-		var sentByMe = (data.uid == $.session.get('userid'))
-		var con1 = $('<div />', {'class': 'row'});
-		if(sentByMe) con1.append($('<div />', {'class': 'col-xs-2'}));
-		var con2 = $('<div />', {'class': 'col-xs-10 chat-them-side'});
-		var con3 = $('<div />', {'class': 'media'});
-		var con4 = $('<a />', {'class': 'pull-left'});
-		var con5 = $('<img />', {'class': 'media-object', 'src': '/static/images/avatar.png', 'width':'80'});
-		var con6 = $('<div />', {'class': 'media-body'});
-		var con7 = $('<h4 />', {text: data.user, 'class': 'media-heading', 'style': 'font-weight: 500'});
-		var con8 = $('<small />');
-		var con9 = $('<i />', {text: ' '+moment().format('h:mm A')});
-		var con10 = $('<p />', {text: data.msg, 'class': 'text-justify'});
-		if(sentByMe) {
-			con2 = $('<div />', {'class': 'col-xs-10 chat-our-side'});
-			con4 = $('<a />', {'class': 'pull-right'});
-		}
-		if(avatarExists('http://' + document.domain + ':' + location.port + '/uploads/avatar/'+ data.rid + '_' + data.uid + '.jpg')) {
-			con5 = $('<img />', {'class': 'media-object', 'src': '/uploads/avatar/' + data.rid + '_' + data.uid + '.jpg', 'width': '80'});
-		}
-		con8.append(con9);
-		con7.append(con8);
-		con6.append(con7);
-		con4.append(con5);
-		con3.append(con4);
-		con3.append(con6);
-		con3.append(con10);
-		con2.append(con3);
-		con1.append(con2);
-        $('.container .chat-content').append(con1);
-		$(document).scrollTop($('.page-content-wrapper')[0].scrollHeight);
+		addMessage(data);
 	});
 });
 
@@ -169,9 +140,35 @@ function refreshUsers() {
 	});
 }
 
-function avatarExists(url) {
-	var http = new XMLHttpRequest();
-	http.open('HEAD', url, false);
-	http.send();
-	return http.status != 404;
+function addMessage(data) {
+	var filename = data.rid + '_' + data.uid;
+	$.getJSON('/getAvatar/'+filename, function(avatarData) {
+		var sentByMe = (data.uid == $.session.get('userid'))
+		var con1 = $('<div />', {'class': 'row'});
+		if(sentByMe) con1.append($('<div />', {'class': 'col-xs-2'}));
+		var con2 = $('<div />', {'class': 'col-xs-10 chat-them-side'});
+		var con3 = $('<div />', {'class': 'media'});
+		var con4 = $('<a />', {'class': 'pull-left'});
+		var con5 = $('<img />', {'class': 'media-object', 'src': avatarData.url, 'width':'80'});
+		var con6 = $('<div />', {'class': 'media-body'});
+		var con7 = $('<h4 />', {text: data.user, 'class': 'media-heading', 'style': 'font-weight: 500'});
+		var con8 = $('<small />');
+		var con9 = $('<i />', {text: ' ' + moment().format('h:mm A')});
+		var con10 = $('<p />', {text: data.msg, 'class': 'text-justify'});
+		if(sentByMe) {
+			con2 = $('<div />', {'class': 'col-xs-10 chat-our-side'});
+			con4 = $('<a />', {'class': 'pull-right'});
+		}
+		con8.append(con9);
+		con7.append(con8);
+		con6.append(con7);
+		con4.append(con5);
+		con3.append(con4);
+		con3.append(con6);
+		con3.append(con10);
+		con2.append(con3);
+		con1.append(con2);
+        $('.container .chat-content').append(con1);
+		$(document).scrollTop($('.page-content-wrapper')[0].scrollHeight);
+	});
 }

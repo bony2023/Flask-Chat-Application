@@ -12,14 +12,14 @@ def index():
 	anon = StartAnon()
 	if create.validate_on_submit():
 		session['userid'], session['username'], session['roomid'] = create_room(create)
-		upload(request.files['avatarC'], session['roomid'] + '_' + str(session['userid']) + '.jpg')
+		upload(request.files['avatarC'], session['roomid'] + '_' + str(session['userid']))
 		return redirect(url_for('.chat'))
 	elif join.validate_on_submit():
 		if not validRoom(join.roomidJ.data):
 			flash('%s is not a valid Room ID. Try again or create new room.' %join.roomidJ.data)
 			return redirect('/')
 		session['userid'], session['username'], session['roomid'] = join_room(join, join.roomidJ.data)
-		upload(request.files['avatarJ'], session['roomid'] + '_' + str(session['userid']) + '.jpg')
+		upload(request.files['avatarJ'], session['roomid'] + '_' + str(session['userid']))
 		return redirect(url_for('.chat'))
 	elif session.get('userid', '') != '':
 		return redirect(url_for('.chat'))
@@ -35,9 +35,12 @@ def chat():
 		})
 	return render_template('chat.html', namespace='/chat')
 	
-@main.route('/uploads/avatar/<filename>')
+@main.route('/getAvatar/<filename>')
 def getAvatar(filename):
-	return userAvatar(filename)
+	if request.is_xhr:
+		return jsonify({
+			'url': userAvatar(filename)
+		})
 	
 @main.route('/getUsers')
 def RoomMembers():
